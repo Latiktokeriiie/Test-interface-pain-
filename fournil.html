@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="fr" data-protegee><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script src="/config.js"></script>
+<title>Le fournil · Votre pAIn quotidien</title>
+<meta name="pq-titre-en" content="The kitchen · Votre pAIn quotidien">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,800&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="/charte.css">
+<style>
+body{margin:0;background:var(--fond-page)}
+a{color:var(--brun)}a:hover{color:var(--brun-fonce)}
+textarea:focus,select:focus,input:focus{outline:2px solid var(--braise);outline-offset:1px}
+button:focus-visible,a:focus-visible{outline:2px solid var(--braise);outline-offset:2px}
+</style>
+<style>*{box-sizing:border-box}html,body{overflow-x:hidden}@media (max-width:640px){main{padding:24px 16px 40px!important}h1{font-size:30px!important}}</style>
+<style>
+.fo-carte{background:var(--creme);border:1px solid var(--bord);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:16px}
+.fo-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:999px;border:1.5px solid var(--bord-fort);background:var(--creme);color:var(--texte);font:inherit;font-weight:700;font-size:14px;text-decoration:none;cursor:pointer}
+.fo-btn:hover{border-color:var(--brun);color:var(--texte)}
+.fo-btn-plein{border-color:var(--braise);background:var(--braise);color:var(--sur-plein)}
+.fo-btn-plein:hover{border-color:var(--braise-fonce);background:var(--braise-fonce);color:var(--sur-plein)}
+.fo-btn:disabled{opacity:.5;cursor:not-allowed}
+.fo-btn:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.fo-btn:active:not(:disabled){transform:translateY(1px)}
+.fo-btn-linkedin{border-color:var(--linkedin-bord);background:var(--linkedin-fond);color:var(--linkedin-texte)}
+.fo-btn-linkedin:hover:not(:disabled){border-color:var(--linkedin-survol);background:var(--linkedin-survol);color:var(--linkedin-texte)}
+.fo-lien{background:none;border:0;padding:0 4px;min-height:44px;font:inherit;font-size:13px;font-weight:700;color:var(--brun);cursor:pointer;align-self:flex-start}
+.fo-select{min-height:44px;padding:0 12px;border-radius:12px;border:1.5px solid var(--bord-fort);background:var(--fond);color:var(--texte);font:inherit;font-weight:500}
+.fo-choix{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding:16px 20px;border-bottom:1px solid var(--trait)}
+.fo-choix:last-child{border-bottom:0}
+.fo-post{display:flex;flex-direction:column;gap:12px;padding:18px;border:1px solid var(--trait);border-radius:16px;background:var(--fond)}
+.fo-champs{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
+.fo-champ{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--texte-2);flex:1 1 130px;min-width:0}
+.fo-champ input{min-height:44px;width:100%;padding:0 12px;border-radius:12px;border:1.5px solid var(--bord-fort);background:var(--creme);color:var(--texte);font:inherit;font-size:15px}
+.fo-champ input[aria-invalid="true"]{border-color:var(--erreur)}
+.fo-erreur{font-size:12px;font-weight:600;color:var(--erreur)}
+.fo-voile{position:fixed;inset:0;z-index:40;background:var(--voile);display:flex;align-items:center;justify-content:center;padding:16px}
+.fo-boite{width:100%;max-width:560px;max-height:calc(100vh - 32px);overflow:auto;background:var(--creme);border-radius:20px;box-shadow:var(--ombre-3);padding:22px;display:flex;flex-direction:column;gap:14px}
+#pq-toast{position:fixed;left:16px;right:16px;bottom:16px;z-index:50;display:flex;justify-content:center;pointer-events:none;font-family:'DM Sans', -apple-system, 'Segoe UI', Roboto, sans-serif}
+@keyframes pq-apparait{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.toast-box{animation:none!important}}
+.toast-box{animation:pq-apparait .2s ease-out;pointer-events:auto;display:flex;align-items:center;gap:14px;max-width:520px;min-height:44px;padding:8px 18px;border-radius:14px;background:var(--texte);color:var(--fond);font-size:15px;font-weight:600;box-shadow:var(--ombre-3)}
+@media (max-width:640px){.fo-carte{padding:18px}.fo-choix{padding:14px 16px}}
+</style>
+<script src="/store.js"></script><script src="/demo.js"></script><script src="/auth.js"></script><script src="/garde.js"></script><script src="/theme.js"></script>
+</head><body><div id="root"></div>
+<div id="pq-toast" aria-live="polite"></div>
+<script type="text/plain" id="tpl">
+<div style="display:flex;flex-wrap:wrap;min-height:100vh;background:var(--fond);color:var(--texte);font-family:'DM Sans', -apple-system, 'Segoe UI', Roboto, sans-serif;font-size:15px;line-height:1.5">
+<nav data-nav data-page="fournil" aria-label="{{t.navLabel}}" style="flex:1 1 250px;max-width:100%;box-sizing:border-box;background:var(--sable);border-right:1px solid var(--bord);padding:28px 18px;display:flex;flex-direction:column;gap:26px"></nav>
+<main style="flex:999 1 560px;min-width:0;box-sizing:border-box;padding:40px 44px 60px;display:flex;flex-direction:column;gap:26px">
+<header style="display:flex;flex-direction:column;gap:6px;max-width:780px">
+<p style="margin:0;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--sur-titre)">{{t.eyebrow}}</p>
+<h1 style="margin:0;font-family:Fraunces, Georgia, serif;font-size:40px;line-height:1.1;font-weight:800;letter-spacing:-0.01em"><span style="display:block">{{t.titre1}}</span><span style="display:block">{{t.titre2}}</span></h1>
+<p style="margin:0;color:var(--doux);font-size:16px">{{t.subtitle}}</p>
+</header>
+<p role="status" style="{{chargementStyle}}">{{t.chargement}}</p>
+<section aria-labelledby="choix-t" style="{{choixStyle}}">
+<h2 id="choix-t" class="pq-sr">{{t.choixTitre}}</h2>
+<p style="{{introuvableStyle}}">{{t.introuvable}}</p>
+<h3 style="{{jourTitreStyle}}">{{t.choixJour}}</h3>
+<div style="{{jourStyle}}">
+<sc-for list="{{choixJour}}" as="c" hint-placeholder-count="5">
+<div class="fo-choix">
+<span class="{{c.chip}}">{{c.etat}}</span>
+<div style="flex:999 1 260px;min-width:0;display:flex;flex-direction:column"><span style="font-family:Fraunces, Georgia, serif;font-weight:700;font-size:17px;overflow-wrap:anywhere">{{c.titre}}</span><span style="font-size:13px;color:var(--doux)">{{c.source}}</span></div>
+<a href="{{c.href}}" class="btn-petrir" aria-label="{{c.label}}"><svg class="pain-ico" viewBox="0 0 24 16" aria-hidden="true" focusable="false"><path d="M1.5 11.2C1.5 6.4 6.2 3 12 3s10.5 3.4 10.5 8.2c0 1.6-1.2 2.8-2.8 2.8H4.3c-1.6 0-2.8-1.2-2.8-2.8z" fill="var(--petrir-pain)" stroke="currentColor" stroke-width="1.3"></path><path d="M6.8 7.4l2.2 2.6M10.9 6.4l2.2 2.6M15 7.4l2.2 2.6" stroke="var(--petrir-grigne)" stroke-width="1.6" stroke-linecap="round" fill="none"></path></svg>{{t.petrir}}</a>
+</div>
+</sc-for>
+</div>
+<h3 style="{{cotesTitreStyle}}">{{t.choixCotes}}</h3>
+<div style="{{cotesStyle}}">
+<sc-for list="{{choixCotes}}" as="c" hint-placeholder-count="2">
+<div class="fo-choix">
+<span class="{{c.chip}}">{{c.etat}}</span>
+<div style="flex:999 1 260px;min-width:0;display:flex;flex-direction:column"><span style="font-family:Fraunces, Georgia, serif;font-weight:700;font-size:17px;overflow-wrap:anywhere">{{c.titre}}</span><span style="font-size:13px;color:var(--doux)">{{c.source}}</span></div>
+<a href="{{c.href}}" class="btn-petrir" aria-label="{{c.label}}"><svg class="pain-ico" viewBox="0 0 24 16" aria-hidden="true" focusable="false"><path d="M1.5 11.2C1.5 6.4 6.2 3 12 3s10.5 3.4 10.5 8.2c0 1.6-1.2 2.8-2.8 2.8H4.3c-1.6 0-2.8-1.2-2.8-2.8z" fill="var(--petrir-pain)" stroke="currentColor" stroke-width="1.3"></path><path d="M6.8 7.4l2.2 2.6M10.9 6.4l2.2 2.6M15 7.4l2.2 2.6" stroke="var(--petrir-grigne)" stroke-width="1.6" stroke-linecap="round" fill="none"></path></svg>{{t.petrir}}</a>
+</div>
+</sc-for>
+</div>
+<div style="{{choixVideStyle}}"><p style="margin:0;color:var(--doux)">{{t.choixVide}}</p><a href="/fournee" class="fo-btn fo-btn-plein" style="align-self:flex-start">{{t.allerFournee}}</a></div>
+</section>
+<div style="{{sujetStyle}}">
+<div style="background:var(--sable);border:1px solid var(--bord);border-radius:16px;padding:14px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px">
+<span class="{{sujet.chip}}">{{sujet.etat}}</span>
+<div style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:2px">
+<span style="font-family:Fraunces, Georgia, serif;font-weight:700;font-size:17px;overflow-wrap:anywhere">{{sujet.titre}}</span>
+<span style="font-size:13px;color:var(--doux)">{{sujet.source}}</span>
+<span class="pour-toi" style="{{sujet.pourToiStyle}}"><svg class="ampoule" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1v1.8M4.2 4.2l1.3 1.3M19.8 4.2l-1.3 1.3M1.5 11.5h1.8M20.7 11.5h1.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M12 5a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2v.4h5.2v-.4c0-.8.4-1.5 1-2A6 6 0 0 0 12 5z" fill="currentColor" stroke="var(--brun)" stroke-width="1.2" stroke-linejoin="round"></path><path d="M9.6 20.6h4.8M10.6 22.8h2.8" stroke="var(--brun)" stroke-width="1.6" stroke-linecap="round"></path></svg><span>{{sujet.pourToi}}</span></span>
+</div>
+<a href="/fournil" data-focus="changer" style="font-weight:700;font-size:14px;min-height:44px;display:inline-flex;align-items:center">{{t.change}}</a>
+</div>
+<section style="display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start">
+<div class="fo-carte" style="flex:999 1 460px;min-width:0">
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px">
+<h2 style="margin:0;font-family:Fraunces, Georgia, serif;font-size:22px">{{t.draftTitle}}</h2>
+<span style="{{compteurStyle}}">{{compteur}}</span>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:12px">
+<label for="sel-ton" style="display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:var(--texte-2);flex:1 1 180px">{{t.tone}}
+<select id="sel-ton" class="fo-select" onChange="{{choisirTon}}">
+<sc-for list="{{tons}}" as="o" hint-placeholder-count="3"><option value="{{o.v}}" {{o.sel}}>{{o.label}}</option></sc-for>
+</select>
+</label>
+<label for="sel-langue" style="display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:var(--texte-2);flex:1 1 180px">{{t.langPost}}
+<select id="sel-langue" class="fo-select" onChange="{{choisirLangue}}">
+<sc-for list="{{langues}}" as="o" hint-placeholder-count="2"><option value="{{o.v}}" {{o.sel}}>{{o.label}}</option></sc-for>
+</select>
+</label>
+</div>
+<div role="alert" style="{{attenteStyle}}">
+<span style="flex:1 1 100%;font-weight:600">{{attenteTexte}}</span>
+<button type="button" class="fo-btn fo-btn-plein" data-focus="remplacer" onClick="{{remplacer}}">{{t.remplacer}}</button>
+<button type="button" class="fo-btn" data-focus="garder" onClick="{{garder}}">{{t.garder}}</button>
+</div>
+<label for="brouillon" style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--texte-2)">{{t.textLabel}}
+<textarea id="brouillon" rows="14" onInput="{{saisir}}" onCompositionend="{{saisir}}" style="box-sizing:border-box;width:100%;padding:14px 16px;border-radius:14px;border:1.5px solid var(--bord-fort);background:var(--fond);color:var(--texte);font:inherit;font-weight:400;font-size:15px;line-height:1.6;resize:vertical">
+{{texte}}</textarea>
+</label>
+<div style="display:flex;flex-wrap:wrap;gap:10px">
+<button type="button" class="fo-btn" data-focus="repetrir" onClick="{{repetrir}}">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"></path><path d="M20 5v6h-6"></path></svg>{{t.regen}}</button>
+<button type="button" class="fo-btn fo-btn-plein" data-focus="copier" onClick="{{copier}}" {{desactive}}>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a1 1 0 0 1 1-1h10"></path></svg>{{t.copy}}</button>
+<button type="button" class="fo-btn fo-btn-linkedin" data-focus="publier" onClick="{{ouvrirModale}}" {{desactive}}>{{t.publish}}</button>
+</div>
+</div>
+<aside style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:18px">
+<div style="background:var(--panneau);color:var(--panneau-texte);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px">
+<h2 style="margin:0;font-family:Fraunces, Georgia, serif;font-size:20px;color:var(--panneau-or)">{{t.checkTitle}}</h2>
+<ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{checks}}" as="k" hint-placeholder-count="4">
+<li style="display:flex;gap:10px;align-items:flex-start;font-size:14px"><span style="{{k.box}}" aria-hidden="true">{{k.mark}}</span><span>{{k.label}}<span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{k.etat}}</span></span></li>
+</sc-for>
+</ul>
+</div>
+<div style="background:var(--creme);border:1px solid var(--bord);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px">
+<h2 style="margin:0;font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--sur-titre)">{{t.preview}}</h2>
+<div style="display:flex;align-items:center;gap:10px">
+<span aria-hidden="true" style="flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:var(--cuivre);color:var(--sur-plein);display:inline-flex;align-items:center;justify-content:center;font-weight:700">{{auteur.initiale}}</span>
+<div style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:700;font-size:14px">{{auteur.prenom}}</span><span style="font-size:12px;color:var(--doux)">{{auteur.role}}</span></div>
+</div>
+<p id="apercu-texte" style="margin:0;font-size:14px;color:var(--texte-2);white-space:pre-line;overflow-wrap:anywhere">{{apercu.texte}}</p>
+<button type="button" class="fo-lien" data-focus="voir-plus" aria-expanded="{{apercu.ouvert}}" aria-controls="apercu-texte" onClick="{{basculerApercu}}" style="{{apercu.boutonStyle}}">{{apercu.bouton}}</button>
+</div>
+</aside>
+</section>
+</div>
+<section class="fo-carte" aria-labelledby="perf-t">
+<div style="display:flex;flex-direction:column;gap:4px;max-width:680px">
+<h2 id="perf-t" style="margin:0;font-family:Fraunces, Georgia, serif;font-size:24px">{{t.perfTitle}}</h2>
+<p style="margin:0;color:var(--doux);font-size:14px">{{t.perfSub}}</p>
+</div>
+<p style="{{perfVideStyle}}">{{t.perfVide}}</p>
+<sc-for list="{{posts}}" as="p" hint-placeholder-count="2">
+<form class="fo-post" data-index="{{p.i}}" data-id="{{p.id}}" onSubmit="{{enregistrerChiffres}}" novalidate aria-label="{{p.formLabel}}">
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px"><h3 style="margin:0;font-family:Fraunces, Georgia, serif;font-size:17px;overflow-wrap:anywhere">{{p.titre}}</h3><span style="font-size:13px;color:var(--doux)">{{p.date}}</span></div>
+<p style="margin:0;font-size:14px;color:var(--texte-2)">{{p.resume}}</p>
+<span style="font-size:13px;font-weight:700;color:var(--texte-2)">{{t.formTitle}}</span>
+<div class="fo-champs">
+<label class="fo-champ" for="{{p.idImpressions}}">{{t.champs.impressions}}<input id="{{p.idImpressions}}" data-index="{{p.i}}" data-champ="impressions" inputmode="numeric" autocomplete="off" value="{{p.vImpressions}}" aria-invalid="{{p.invImpressions}}" aria-describedby="{{p.idImpressions}}-e" onInput="{{saisirChiffre}}"><span id="{{p.idImpressions}}-e" class="fo-erreur">{{p.eImpressions}}</span></label>
+<label class="fo-champ" for="{{p.idReactions}}">{{t.champs.reactions}}<input id="{{p.idReactions}}" data-index="{{p.i}}" data-champ="reactions" inputmode="numeric" autocomplete="off" value="{{p.vReactions}}" aria-invalid="{{p.invReactions}}" aria-describedby="{{p.idReactions}}-e" onInput="{{saisirChiffre}}"><span id="{{p.idReactions}}-e" class="fo-erreur">{{p.eReactions}}</span></label>
+<label class="fo-champ" for="{{p.idRepublications}}">{{t.champs.republications}}<input id="{{p.idRepublications}}" data-index="{{p.i}}" data-champ="republications" inputmode="numeric" autocomplete="off" value="{{p.vRepublications}}" aria-invalid="{{p.invRepublications}}" aria-describedby="{{p.idRepublications}}-e" onInput="{{saisirChiffre}}"><span id="{{p.idRepublications}}-e" class="fo-erreur">{{p.eRepublications}}</span></label>
+<label class="fo-champ" for="{{p.idCommentaires}}">{{t.champs.commentaires}}<input id="{{p.idCommentaires}}" data-index="{{p.i}}" data-champ="commentaires" inputmode="numeric" autocomplete="off" value="{{p.vCommentaires}}" aria-invalid="{{p.invCommentaires}}" aria-describedby="{{p.idCommentaires}}-e" onInput="{{saisirChiffre}}"><span id="{{p.idCommentaires}}-e" class="fo-erreur">{{p.eCommentaires}}</span></label>
+<label class="fo-champ" for="{{p.idContacts}}">{{t.champs.contacts}}<input id="{{p.idContacts}}" data-index="{{p.i}}" data-champ="contacts" inputmode="numeric" autocomplete="off" value="{{p.vContacts}}" aria-invalid="{{p.invContacts}}" aria-describedby="{{p.idContacts}}-e" onInput="{{saisirChiffre}}"><span id="{{p.idContacts}}-e" class="fo-erreur">{{p.eContacts}}</span></label>
+</div>
+<button type="submit" class="fo-btn fo-btn-plein" id="{{p.idBouton}}" style="align-self:flex-start">{{t.save}}</button>
+</form>
+</sc-for>
+<p style="margin:0;font-size:13px;color:var(--doux)">{{t.apiNote}}</p>
+</section>
+</main>
+</div>
+<div class="fo-voile" style="{{modaleStyle}}" onClick="{{clicVoile}}">
+<div class="fo-boite" role="dialog" aria-modal="true" aria-labelledby="modale-t" aria-describedby="modale-d" onKeydown="{{clavierModale}}">
+<h2 id="modale-t" style="margin:0;font-family:Fraunces, Georgia, serif;font-size:22px">{{t.modaleTitre}}</h2>
+<p id="modale-d" style="margin:0;font-size:13px;font-weight:700;padding:8px 12px;border-radius:12px;background:var(--miel);color:var(--brun-fonce)">{{t.modaleDemo}}</p>
+<div style="border:1px solid var(--bord);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--champ)">
+<div style="display:flex;align-items:center;gap:10px">
+<span aria-hidden="true" style="flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:var(--cuivre);color:var(--sur-plein);display:inline-flex;align-items:center;justify-content:center;font-weight:700">{{auteur.initiale}}</span>
+<div style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:700;font-size:14px">{{auteur.prenom}}</span><span style="font-size:12px;color:var(--doux)">{{auteur.role}}</span></div>
+</div>
+<p style="margin:0;font-size:14px;color:var(--texte-2);white-space:pre-line;overflow-wrap:anywhere;max-height:40vh;overflow:auto">{{texteNet}}</p>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end">
+<button type="button" class="fo-btn" data-focus="modale-annuler" onClick="{{fermerModale}}">{{t.annuler}}</button>
+<button type="button" class="fo-btn fo-btn-plein" data-focus="modale-confirmer" onClick="{{confirmerPublication}}">{{t.confirmer}}</button>
+</div>
+</div>
+</div>
+</script>
+<script src="/dc.js"></script><script src="/api.js"></script><script src="/bento.js"></script><script src="/bento-ui.js"></script><script src="/fournil.js"></script><script src="/charte.js"></script><script src="/parcours.js"></script><script>
+var HIDE = 'display: none';
+var CHIP = { vert: Charte.puce('vert'), orange: Charte.puce('orange'), rouge: Charte.puce('rouge') };
+var BOX_ON = 'flex: 0 0 auto; width: 20px; height: 20px; border-radius: 6px; background: var(--panneau-or); color: var(--sur-clair); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800';
+var BOX_OFF = 'flex: 0 0 auto; width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--panneau-or); box-sizing: border-box';
+var CHAMP_MAJ = { impressions: 'Impressions', reactions: 'Reactions', republications: 'Republications', commentaires: 'Commentaires', contacts: 'Contacts' };
+var T = {
+fr: {
+navLabel: 'Navigation principale',
+eyebrow: 'Studio LinkedIn', titre1: 'Le fournil', titre2: 'L’IA pétrit, tu enfournes',
+subtitle: 'Ton post déjà rédigé, à partir du sujet que tu as choisi. Tu ajustes, tu copies, tu publies.',
+chargement: 'Le fournil chauffe…',
+choixTitre: 'Sur quel sujet veux-tu écrire ?', introuvable: 'Ce sujet n’est plus disponible. Choisis-en un autre.',
+choixJour: 'Les news du jour', choixCotes: 'Mis de côté', choixVide: 'Aucun sujet pour l’instant : commence par la fournée du jour.', allerFournee: 'Aller à la fournée du jour',
+petrir: 'Pétrir', feux: { vert: 'Tout chaud', orange: 'À pétrir', rouge: 'Rassis' },
+change: 'Changer de sujet',
+draftTitle: 'La pâte du jour', caracteres: 'caractères', enTrop: 'caractères en trop pour LinkedIn',
+tone: 'Ton', tons: { expert: 'Expert accessible', retour: 'Retour d’expérience', provoc: 'Provocateur' },
+langPost: 'Langue du post', languesPost: { fr: 'Français', en: 'Anglais' },
+attente: 'Remplacer ton texte par la variante « {v} » ? Tes modifications seront perdues.', attenteAutre: 'Remplacer ton texte par une autre variante ? Tes modifications seront perdues.',
+remplacer: 'Remplacer', garder: 'Garder mon texte',
+textLabel: 'Texte du post',
+regen: 'Repétrir', copy: 'Copier le texte', publish: 'Valider et publier sur LinkedIn',
+preview: 'Aperçu dans le fil', more: '… voir plus', less: 'voir moins', roleDefaut: 'Membre',
+checkTitle: 'Avant d’enfourner', fait: 'fait', aFaire: 'à faire',
+checks: { accroche: 'Une accroche courte (120 caractères au plus)', chiffre: 'Un chiffre ou un fait vérifiable', pointDeVue: 'Ton point de vue, pas seulement l’info', question: 'Une question pour lancer les commentaires' },
+copie: 'Texte copié', copieKo: 'Copie impossible : sélectionne le texte à la main',
+modaleTitre: 'Publier sur LinkedIn', modaleDemo: 'Démo : rien n’est envoyé à LinkedIn.', annuler: 'Annuler', confirmer: 'Confirmer la publication',
+publie: 'Post publié (simulation). Reporte ses chiffres plus bas.',
+perfTitle: 'Ce que tes posts t’ont rapporté', perfSub: 'Tu reportes tes chiffres LinkedIn après publication, le comptoir fait les totaux.',
+perfVide: 'Rien de publié pour l’instant. Tes posts publiés apparaîtront ici.',
+publieLe: 'Publié le {d}', pasDeChiffres: 'Chiffres pas encore reportés.',
+formTitle: 'Reporter les chiffres', formLabel: 'Chiffres du post : {t}',
+champs: { impressions: 'Impressions', reactions: 'Réactions', republications: 'Republications', commentaires: 'Commentaires', contacts: 'Prises de contact' },
+erreurs: { requis: 'Indique un nombre (0 si aucun).', entier: 'Nombre entier positif ou nul, sans virgule.' },
+save: 'Enregistrer', enregistre: 'Chiffres enregistrés',
+apiNote: 'En V1, la saisie est manuelle. La lecture automatique des statistiques passe par l’API Community Management de LinkedIn, accessible sur demande et après validation.'
+},
+en: {
+navLabel: 'Main navigation',
+eyebrow: 'LinkedIn studio', titre1: 'The kitchen', titre2: 'AI kneads, you bake',
+subtitle: 'Your post already written, from the topic you picked. You adjust, copy and post.',
+chargement: 'Warming up the oven…',
+choixTitre: 'What do you want to write about?', introuvable: 'This topic is no longer available. Pick another one.',
+choixJour: 'Today’s news', choixCotes: 'Saved', choixVide: 'No topic yet: start with today’s batch.', allerFournee: 'Go to today’s batch',
+petrir: 'Knead', feux: { vert: 'Piping hot', orange: 'Needs kneading', rouge: 'Gone stale' },
+change: 'Change topic',
+draftTitle: 'Today’s dough', caracteres: 'characters', enTrop: 'characters over the LinkedIn limit',
+tone: 'Tone', tons: { expert: 'Accessible expert', retour: 'Lessons learned', provoc: 'Bold take' },
+langPost: 'Post language', languesPost: { fr: 'French', en: 'English' },
+attente: 'Replace your text with the “{v}” version? Your edits will be lost.', attenteAutre: 'Replace your text with another version? Your edits will be lost.',
+remplacer: 'Replace', garder: 'Keep my text',
+textLabel: 'Post text',
+regen: 'Re-knead', copy: 'Copy text', publish: 'Confirm and post to LinkedIn',
+preview: 'Feed preview', more: '… see more', less: 'see less', roleDefaut: 'Member',
+checkTitle: 'Before baking', fait: 'done', aFaire: 'to do',
+checks: { accroche: 'A short hook (120 characters max)', chiffre: 'A verifiable figure or fact', pointDeVue: 'Your point of view, not just the news', question: 'A question to start the comments' },
+copie: 'Text copied', copieKo: 'Could not copy: select the text by hand',
+modaleTitre: 'Post to LinkedIn', modaleDemo: 'Demo: nothing is sent to LinkedIn.', annuler: 'Cancel', confirmer: 'Confirm and post',
+publie: 'Post published (simulation). Enter its numbers below.',
+perfTitle: 'What your posts brought in', perfSub: 'You enter your LinkedIn numbers after posting, the counter adds them up.',
+perfVide: 'Nothing posted yet. Your published posts will show up here.',
+publieLe: 'Posted on {d}', pasDeChiffres: 'No numbers entered yet.',
+formTitle: 'Enter the numbers', formLabel: 'Post numbers: {t}',
+champs: { impressions: 'Impressions', reactions: 'Reactions', republications: 'Reposts', commentaires: 'Comments', contacts: 'Leads' },
+erreurs: { requis: 'Enter a number (0 if none).', entier: 'Whole number, zero or more, no decimals.' },
+save: 'Save', enregistre: 'Numbers saved',
+apiNote: 'In V1, numbers are entered by hand. Reading stats automatically goes through LinkedIn’s Community Management API, available on application and after approval.'
+}
+};
+var STOCKAGE_VIDE = { getItem: function () { return null; }, setItem: function () { throw new Error('stockage indisponible'); } };
+function stockage() { try { return window.localStorage || STOCKAGE_VIDE; } catch (e) { return STOCKAGE_VIDE; } }
+function focalisables(el) { return Array.prototype.filter.call(el.querySelectorAll('a[href],button:not([disabled])'), function (x) { return x.offsetParent !== null; }); }
+function nombre(n, lang) { return Number(n).toLocaleString(lang === 'en' ? 'en-GB' : 'fr-FR'); }
+function dateLisible(iso, lang) {
+var d = new Date(iso);
+if (isNaN(d.getTime())) return '';
+return d.toLocaleDateString(lang === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+function refDemandee() { try { return new URLSearchParams(window.location.search).get('ref'); } catch (e) { return null; } }
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+var u = null;
+try { u = Auth.utilisateurCourant(); } catch (e) {}
+this.state = { lang: 'fr', chargement: true, ref: refDemandee(), articles: [], ecrits: {}, store: Store.charger(stockage()), utilisateur: u,
+sujet: null, ton: 'expert', langue: 'fr', n: 0, texte: '', propose: '', attente: null, apercuOuvert: false, modale: false, saisies: {}, erreurs: {}, toast: null };
+this.charger();
+}
+charger() {
+var self = this;
+var fournee = Api.chargerFournee().catch(function () { return {}; });
+var ecrits = fetch('/data/brouillons.json').then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; });
+Promise.all([fournee, ecrits]).then(function (r) {
+var articles = r[0] && r[0].etat === 'pret' ? r[0].articles : [];
+self.ouvrir(articles, r[1] && typeof r[1] === 'object' ? r[1] : {});
+});
+}
+ouvrir(articles, ecrits) {
+var store = Store.charger(stockage());
+var trouve = Fournil.trouverSujet(this.state.ref, articles, store.sauves);
+var maj = { chargement: false, articles: articles, ecrits: ecrits, store: store, sujet: trouve };
+if (trouve) {
+var a = trouve.article;
+var enregistre = store.brouillons[a.ref];
+var v = typeof enregistre === 'string' ? Fournil.retrouverVariante(a, enregistre, ecrits) : null;
+var choix = v || { ton: 'expert', langue: 'fr', n: 0 };
+maj.ton = choix.ton; maj.langue = choix.langue; maj.n = choix.n;
+maj.propose = Fournil.proposerVariante(a, choix.ton, choix.langue, choix.n, ecrits);
+maj.texte = typeof enregistre === 'string' ? enregistre : maj.propose;
+}
+this.setState(maj);
+}
+// Avant chaque rendu : défilement interne et hauteur (redimensionnée à la main) de la zone de texte.
+setState(s) {
+var z = document.getElementById('brouillon');
+if (z) this.zone = { haut: z.scrollTop, hauteur: z.style.height };
+super.setState(s);
+}
+maintenant() { return new Date().toISOString(); }
+// Le store est relu avant chaque écriture pour ne pas écraser un changement fait dans un autre onglet.
+sauverBrouillon(texte) {
+var store = Store.enregistrerBrouillon(Store.charger(stockage()), this.state.sujet.article.ref, texte);
+Store.enregistrer(stockage(), store);
+return store;
+}
+saisir(e) {
+var el = e.target;
+if (e.isComposing) { this.state.texte = el.value; return; }
+this.setState({ texte: el.value, store: this.sauverBrouillon(el.value) });
+}
+demander(ton, langue, n, origine) {
+if (!this.state.sujet) return;
+var st = this.state;
+var modifie = st.texte.trim() !== '' && Fournil.texteModifie(st.texte, st.propose);
+if (modifie) { this.pendingFocus = 'remplacer'; this.setState({ attente: { ton: ton, langue: langue, n: n, origine: origine } }); return; }
+this.appliquer(ton, langue, n, origine);
+}
+appliquer(ton, langue, n, origine) {
+var texte = Fournil.proposerVariante(this.state.sujet.article, ton, langue, n, this.state.ecrits);
+this.pendingFocus = origine;
+this.setState({ ton: ton, langue: langue, n: n, propose: texte, texte: texte, attente: null, store: this.sauverBrouillon(texte) });
+}
+copier() {
+var self = this;
+var texte = this.state.texte;
+function repli() {
+var ok = false;
+var zone = document.createElement('textarea');
+zone.value = texte; zone.setAttribute('readonly', ''); zone.style.position = 'fixed'; zone.style.opacity = '0';
+document.body.appendChild(zone); zone.select();
+try { ok = document.execCommand('copy'); } catch (err) {}
+document.body.removeChild(zone);
+var b = document.querySelector('[data-focus="copier"]'); if (b) b.focus();
+self.annoncer(ok ? 'copie' : 'copieKo');
+}
+if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(texte).then(function () { self.annoncer('copie'); }, repli);
+else repli();
+}
+annoncer(cle) {
+var self = this;
+clearTimeout(this.toastTimer);
+this.toastN = (this.toastN || 0) + 1;
+this.toastTimer = setTimeout(function () { self.setState({ toast: null }); }, 5000);
+this.setState({ toast: { cle: cle, n: this.toastN } });
+}
+fermerModale() { this.pendingFocus = 'publier'; this.setState({ modale: false }); }
+confirmerPublication() {
+var a = this.state.sujet.article;
+var store = Store.publier(Store.charger(stockage()), { ref: a.ref, titre: a.titre }, this.maintenant());
+Store.enregistrer(stockage(), store);
+this.pendingFocus = 'publier';
+this.state.store = store;
+this.state.modale = false;
+this.annoncer('publie');
+}
+enregistrerChiffres(form) {
+var i = form.getAttribute('data-index');
+var id = form.getAttribute('data-id');
+var r = Fournil.validerChiffres(this.saisiesDe(i));
+var erreurs = Object.assign({}, this.state.erreurs);
+erreurs[i] = r.erreurs;
+if (!r.chiffres) {
+var premier = Fournil.CHAMPS.filter(function (c) { return r.erreurs[c]; })[0];
+this.pendingFocus = '#ch-' + i + '-' + premier;
+this.setState({ erreurs: erreurs });
+return;
+}
+var store = Store.saisirChiffres(Store.charger(stockage()), id, r.chiffres);
+Store.enregistrer(stockage(), store);
+var saisies = Object.assign({}, this.state.saisies);
+delete saisies[i];
+this.state.store = store; this.state.erreurs = erreurs; this.state.saisies = saisies;
+this.annoncer('enregistre');
+}
+// Saisie en cours, sinon chiffres déjà enregistrés pour ce post.
+saisiesDe(i) {
+var post = (this.state.store.publies || [])[i];
+var base = {};
+Fournil.CHAMPS.forEach(function (c) { base[c] = post && post.chiffres ? String(post.chiffres[c]) : ''; });
+return Object.assign(base, this.state.saisies[i] || {});
+}
+afterRender(root) {
+var lang = this.state.lang || 'fr';
+var toast = this.state.toast;
+BentoUI.toast(document.getElementById('pq-toast'), toast ? { cle: toast.n + '-' + lang, texte: T[lang][toast.cle], annuler: '' } : null, function () {});
+var z = root.querySelector('#brouillon');
+if (z && this.zone) { z.style.height = this.zone.hauteur; z.scrollTop = this.zone.haut; }
+if (this.state.modale && this.pendingFocus === 'modale') {
+this.pendingFocus = null;
+var b = root.querySelector('[data-focus="modale-confirmer"]'); if (b) b.focus();
+return;
+}
+var f = this.pendingFocus;
+this.pendingFocus = null;
+if (!f) return;
+var el = f.charAt(0) === '#' ? root.querySelector(f) : root.querySelector('[data-focus="' + f + '"]');
+if (f === 'ton') el = root.querySelector('#sel-ton');
+if (f === 'langue') el = root.querySelector('#sel-langue');
+if (el) Parcours.focaliser(el);
+}
+renderVals() {
+var self = this;
+var st = this.state || {};
+var lang = st.lang || 'fr';
+var t = T[lang];
+var sep = lang === 'en' ? ': ' : ' : ';
+var choix = Fournil.listeChoix(st.articles, st.store.sauves);
+var enChoix = !st.chargement && !st.sujet;
+var vueChoix = function (a) {
+var feu = CHIP[a.feu] ? a.feu : 'rouge';
+return { chip: CHIP[feu], etat: t.feux[feu], titre: a.titre || '', source: a.source || '', href: Bento.lienFournil(a.ref), label: t.petrir + sep + (a.titre || '') };
+};
+var sujet = { chip: '', etat: '', titre: '', source: '', pourToi: '', pourToiStyle: HIDE };
+if (st.sujet) {
+var a = st.sujet.article;
+var feu = CHIP[a.feu] ? a.feu : 'rouge';
+sujet = { chip: CHIP[feu], etat: t.feux[feu], titre: a.titre || '', source: a.source || '', pourToi: a.pourToi || '',
+pourToiStyle: a.pourToi ? '' : HIDE };
+}
+var c = Fournil.checklist(st.texte, st.langue);
+var ap = Fournil.apercu(st.texte);
+var ouvert = st.apercuOuvert && ap.coupe;
+var u = st.utilisateur || {};
+var prenom = u.prenom || '';
+var metiers = u.profil && u.profil.metiers && u.profil.metiers.length ? u.profil.metiers.join(' · ') : t.roleDefaut;
+var vide = !String(st.texte || '').trim();
+var att = st.attente;
+var attenteTexte = '';
+if (att) attenteTexte = att.origine === 'repetrir' ? t.attenteAutre : t.attente.replace('{v}', t.tons[att.ton] + ' · ' + t.languesPost[att.langue]);
+var publies = (st.store.publies || []).map(function (p, i) { return { p: p, i: i }; })
+.sort(function (x, y) { return String(y.p.publieLe).localeCompare(String(x.p.publieLe)); });
+return {
+t: t,
+chargementStyle: st.chargement ? 'margin: 0; color: var(--doux); font-weight: 600' : HIDE,
+choixStyle: enChoix ? 'display: flex; flex-direction: column; gap: 14px' : HIDE,
+introuvableStyle: enChoix && st.ref ? 'margin: 0; padding: 12px 16px; border-radius: 14px; background: var(--miel); color: var(--brun-fonce); font-weight: 600' : HIDE,
+jourTitreStyle: choix.jour.length ? 'margin: 6px 0 0; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cuivre)' : HIDE,
+jourStyle: choix.jour.length ? 'background: var(--creme); border: 1px solid var(--bord); border-radius: 20px; overflow: hidden' : HIDE,
+cotesTitreStyle: choix.cotes.length ? 'margin: 6px 0 0; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cuivre)' : HIDE,
+cotesStyle: choix.cotes.length ? 'background: var(--creme); border: 1px solid var(--bord); border-radius: 20px; overflow: hidden' : HIDE,
+choixVideStyle: choix.jour.length || choix.cotes.length ? HIDE : 'display: flex; flex-direction: column; gap: 12px; background: var(--creme); border: 1.5px dashed var(--bord-fort); border-radius: 20px; padding: 24px',
+choixJour: choix.jour.map(vueChoix), choixCotes: choix.cotes.map(vueChoix),
+sujetStyle: st.sujet ? 'display: flex; flex-direction: column; gap: 26px' : HIDE,
+sujet: sujet,
+compteur: nombre(c.longueur, lang) + ' / ' + nombre(c.max, lang) + ' ' + t.caracteres + (c.enTrop ? sep + nombre(c.enTrop, lang) + ' ' + t.enTrop : ''),
+compteurStyle: c.enTrop ? 'font-size: 13px; font-weight: 700; color: var(--erreur); background: var(--erreur-fond); padding: 2px 10px; border-radius: 999px' : 'font-size: 13px; color: var(--doux)',
+tons: Fournil.TONS.map(function (v) { return { v: v, label: t.tons[v], sel: v === st.ton ? 'selected' : '' }; }),
+langues: Fournil.LANGUES.map(function (v) { return { v: v, label: t.languesPost[v], sel: v === st.langue ? 'selected' : '' }; }),
+attenteStyle: att ? 'display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 14px 16px; border-radius: 14px; background: var(--miel); color: var(--brun-fonce)' : HIDE,
+attenteTexte: attenteTexte,
+texte: st.texte, texteNet: String(st.texte || '').trim(),
+desactive: vide ? 'disabled' : '',
+checks: ['accroche', 'chiffre', 'pointDeVue', 'question'].map(function (k) {
+return { box: c[k] ? BOX_ON : BOX_OFF, mark: c[k] ? '✓' : '', label: t.checks[k], etat: ' (' + (c[k] ? t.fait : t.aFaire) + ')' };
+}),
+auteur: { initiale: prenom.charAt(0).toUpperCase(), prenom: prenom, role: metiers },
+apercu: { texte: ouvert ? String(st.texte).trim() : ap.texte, ouvert: String(!!ouvert), bouton: ouvert ? t.less : t.more, boutonStyle: ap.coupe ? '' : HIDE },
+modaleStyle: st.modale ? '' : HIDE,
+perfVideStyle: publies.length ? HIDE : 'margin: 0; padding: 18px 20px; border: 1.5px dashed var(--bord-fort); border-radius: 16px; color: var(--doux); font-weight: 600',
+posts: publies.map(function (x) {
+var p = x.p, i = x.i;
+var s = self.saisiesDe(i);
+var e = st.erreurs[i] || {};
+var v = { i: i, id: p.id, titre: p.titre || '', date: t.publieLe.replace('{d}', dateLisible(p.publieLe, lang)), formLabel: t.formLabel.replace('{t}', p.titre || ''), idBouton: 'ch-' + i + '-ok',
+resume: p.chiffres ? Fournil.CHAMPS.map(function (k) { return t.champs[k] + sep + nombre(p.chiffres[k], lang); }).join(' · ') : t.pasDeChiffres };
+Fournil.CHAMPS.forEach(function (k) {
+var M = CHAMP_MAJ[k];
+v['id' + M] = 'ch-' + i + '-' + k;
+v['v' + M] = s[k];
+v['inv' + M] = String(!!e[k]);
+v['e' + M] = e[k] ? t.erreurs[e[k]] : '';
+});
+return v;
+}),
+choisirTon: function (e) { self.demander(e.target.value, st.langue, 0, 'ton'); },
+choisirLangue: function (e) { self.demander(st.ton, e.target.value, 0, 'langue'); },
+repetrir: function () { self.demander(st.ton, st.langue, st.n + 1, 'repetrir'); },
+remplacer: function () { var x = self.state.attente; if (x) self.appliquer(x.ton, x.langue, x.n, x.origine); },
+garder: function () { self.pendingFocus = self.state.attente ? self.state.attente.origine : 'brouillon'; self.setState({ attente: null }); },
+saisir: function (e) { self.saisir(e); },
+copier: function () { self.copier(); },
+basculerApercu: function () { self.setState({ apercuOuvert: !self.state.apercuOuvert }); },
+ouvrirModale: function () { if (!String(self.state.texte).trim()) return; self.pendingFocus = 'modale'; self.setState({ modale: true }); },
+fermerModale: function () { self.fermerModale(); },
+confirmerPublication: function () { self.confirmerPublication(); },
+clicVoile: function (e) { if (e.target === e.currentTarget) self.fermerModale(); },
+// Focus piégé dans la fenêtre : Tab boucle, Échap ferme.
+clavierModale: function (e) {
+if (e.key === 'Escape') { e.preventDefault(); self.fermerModale(); return; }
+if (e.key !== 'Tab') return;
+var els = focalisables(e.currentTarget);
+if (!els.length) return;
+var premier = els[0], dernier = els[els.length - 1];
+if (e.shiftKey && document.activeElement === premier) { e.preventDefault(); dernier.focus(); }
+else if (!e.shiftKey && document.activeElement === dernier) { e.preventDefault(); premier.focus(); }
+},
+saisirChiffre: function (e) {
+var el = e.target, i = el.getAttribute('data-index');
+var saisies = Object.assign({}, self.state.saisies);
+saisies[i] = Object.assign({}, self.saisiesDe(i));
+saisies[i][el.getAttribute('data-champ')] = el.value;
+self.setState({ saisies: saisies });
+},
+enregistrerChiffres: function (e) { self.enregistrerChiffres(e.currentTarget); }
+};
+}
+}
+</script><script src="/nav.js"></script><script src="/boot.js"></script></body></html>
